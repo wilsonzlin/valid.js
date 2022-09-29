@@ -1,10 +1,8 @@
 import { Validator, ValuePath } from "./_common";
 
-const EXAMPLE_DT = new Date(Date.UTC(2010, 4, 19, 16, 30, 45, 123));
-
-export class VJSDate extends Validator<Date> {
+export class VDate extends Validator<Date> {
   public constructor(helper?: string) {
-    super(EXAMPLE_DT, helper);
+    super(new Date(Date.UTC(2010, 4, 19, 16, 30, 45, 123)), helper);
   }
 
   parse(theValue: ValuePath, raw: unknown): Date {

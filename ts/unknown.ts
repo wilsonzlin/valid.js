@@ -9,5 +9,3 @@ export class VUnknown extends Validator<unknown> {
     return raw;
   }
 }
-
-export const vUnknown = new VUnknown();

@@ -41,7 +41,6 @@ export class VTrimmedString extends VString {
 }
 
 // Trims strings, and ensures that they don't contain null/control/surrogate pair/invisible/etc. characters.
-// This is especially useful as null/surrogate pair characters aren't allowed in PostgreSQL text values.
 export class VHumanString extends VString {
   override parse(theValue: ValuePath, raw: unknown): string {
     if (typeof raw == "string") {

@@ -2,8 +2,8 @@ import { Validator, ValuePath } from "./_common";
 
 export class VString extends Validator<string> {
   public constructor(
-    readonly minLen: number = 0,
-    readonly maxLen: number = Infinity,
+    readonly minLen = 0,
+    readonly maxLen = Infinity,
     readonly regex?: RegExp,
     helper?: string,
     example?: string

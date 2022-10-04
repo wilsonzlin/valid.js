@@ -1,15 +1,4 @@
-import decodeUrlEncoded from "@xtjs/lib/js/decodeUrlEncoded";
 import { Validator, ValuePath } from "./_common";
-
-export const normalisePathnameComponents = (raw: string) =>
-  raw
-    .split("/")
-    .filter((c) => c)
-    .map((c) => decodeUrlEncoded(c));
-
-// Remove any leading or trailing slashes, and normalise slashes.
-export const normalisePathname = (raw: string) =>
-  normalisePathnameComponents(raw).join("/");
 
 export const maybeParseUrl = (
   raw: string,

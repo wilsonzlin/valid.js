@@ -38,7 +38,7 @@ export class VBase64Encoded<V> extends Validator<V> {
       throw theValue.isBadAsIt("is not a Base64 string");
     }
     // Allow spaces as some programs (**cough** PostgreSQL) format Base64 values.
-    if (!/^[a-zA-Z0-9+\/=\s]+$/.test(raw)) {
+    if (!/^[a-zA-Z0-9+\/=\s]*$/.test(raw)) {
       throw theValue.isBadAsIt("is not a valid Base64 string");
     }
     return this.bytesValidator.parse(theValue, decodeBase64(raw));

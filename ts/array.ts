@@ -5,12 +5,12 @@ import { Validator, ValuePath } from "./_common";
 // We tried to make the parsed type readonly but it just broke in too many places, especially 3rd party libraries where we don't have control over the types.
 export class VArray<V> extends Validator<V[]> {
   public constructor(
-    private readonly elem: Validator<V>,
+    readonly elements: Validator<V>,
     private readonly minLen: number = 0,
     private readonly maxLen: number = Infinity,
     helper?: string
   ) {
-    super([elem.example], helper);
+    super([elements.example], helper);
   }
 
   parse(theValue: ValuePath, raw: unknown): V[] {
@@ -23,7 +23,7 @@ export class VArray<V> extends Validator<V[]> {
     if (raw.length > this.maxLen) {
       throw theValue.isBadAsIt("has too many items");
     }
-    return raw.map((v, i) => this.elem.parse(theValue.andThen(`#${i + 1}`), v));
+    return raw.map((v, i) => this.elements.parse(theValue.andThen(`#${i + 1}`), v));
   }
 }
 

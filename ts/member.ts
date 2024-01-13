@@ -1,8 +1,8 @@
 import assertState from "@xtjs/lib/js/assertState";
 import { Validator, ValuePath } from "./_common";
 
-export class VMember<M extends string> extends Validator<M> {
-  readonly values: Set<string>;
+export class VMember<M> extends Validator<M> {
+  readonly values: Set<M>;
 
   public constructor(
     members: ReadonlySet<M> | ReadonlyArray<M>,
@@ -15,7 +15,7 @@ export class VMember<M extends string> extends Validator<M> {
   }
 
   parse(theValue: ValuePath, raw: unknown): M {
-    if (typeof raw != "string" || !this.values.has(raw)) {
+    if (!this.values.has(raw as any)) {
       throw theValue.isBadAsIt("is not a valid value");
     }
     return raw as M;

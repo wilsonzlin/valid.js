@@ -41,7 +41,8 @@ export class VBigInt extends Validator<bigint> {
     readonly max?: bigint,
     helper?: string
   ) {
-    super(min ?? 1n, helper);
+    // Use BigInt(1) instead of 1n in case BigInt isn't supported in the target browser/engine (and parsing would fail, even if this class isn't used).
+    super(min ?? BigInt(1), helper);
   }
 
   parse(theValue: ValuePath, raw: unknown): bigint {

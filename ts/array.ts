@@ -23,7 +23,9 @@ export class VArray<V> extends Validator<V[]> {
     if (raw.length > this.maxLen) {
       throw theValue.isBadAsIt("has too many items");
     }
-    return raw.map((v, i) => this.elements.parse(theValue.andThen(`#${i + 1}`), v));
+    return raw.map((v, i) =>
+      this.elements.parse(theValue.andThen(`#${i + 1}`), v)
+    );
   }
 }
 

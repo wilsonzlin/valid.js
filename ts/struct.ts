@@ -71,3 +71,12 @@ export class VStruct<S extends VStructSchema> extends Validator<
     return validated;
   }
 }
+
+export const partial = <T extends Record<string, Validator<any>>>(
+  fields: T
+): {
+  [F in keyof T]: VOptional<T[F]>;
+} =>
+  Object.fromEntries(
+    Object.entries(fields).map(([k, v]) => [k, new VOptional(v)])
+  ) as any;

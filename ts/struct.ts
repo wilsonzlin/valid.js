@@ -1,6 +1,6 @@
 import isPlainObject from "@xtjs/lib/js/isPlainObject";
 import { VOptional } from "./optional";
-import { Valid, Validator, ValuePath } from "./_common";
+import { Valid, ValidationError, Validator, ValuePath } from "./_common";
 
 export class VObject extends Validator<object> {
   public constructor(helper?: string) {
@@ -80,3 +80,41 @@ export const partial = <T extends Record<string, Validator<any>>>(
   Object.fromEntries(
     Object.entries(fields).map(([k, v]) => [k, new VOptional(v)])
   ) as any;
+
+// Does not care about any missing or extra properties.
+// Omits any properties that fail validation.
+export class VBestEffortStruct<S extends VStructSchema> extends Validator<
+  Partial<ValidStruct<S>>
+> {
+  public constructor(readonly fields: S, helper?: string) {
+    super(
+      Object.fromEntries(
+        Object.entries(fields).map(([n, v]) => [n, v.example] as const)
+      ) as any,
+      helper
+    );
+  }
+
+  parse(theValue: ValuePath, raw: any): Partial<ValidStruct<S>> {
+    if (typeof raw != "object" || raw == null) {
+      throw theValue.isBadAsIt("is not an object");
+    }
+    const validated = {} as any;
+    for (const [name, valueRaw] of Object.entries(raw)) {
+      const validator = this.fields[name];
+      if (!validator) {
+        continue;
+      }
+      try {
+        validated[name] = validator.parse(theValue.andThen(name), valueRaw);
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          // Ignore.
+        } else {
+          throw err;
+        }
+      }
+    }
+    return validated;
+  }
+}

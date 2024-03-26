@@ -1,6 +1,7 @@
 import describeType from "@xtjs/lib/js/describeType";
 import splitString from "@xtjs/lib/js/splitString";
 import { Validator, ValuePath } from "./_common";
+import { VString } from "./string";
 
 // We tried to make the parsed type readonly but it just broke in too many places, especially 3rd party libraries where we don't have control over the types.
 export class VArray<V> extends Validator<V[]> {
@@ -66,16 +67,24 @@ export class VOneElementArray<V> extends Validator<V> {
   }
 }
 
-export class VDelimiterSeparated extends Validator<string[]> {
-  public constructor(readonly delimiter: string, helper = ["1", "2"]) {
-    super(helper);
+export class VDelimiterSeparated<V extends string = string> extends Validator<
+  V[]
+> {
+  public constructor(
+    readonly delimiter: string,
+    readonly elementValidator: Validator<V> = new VString() as any,
+    helper = elementValidator.helper
+  ) {
+    super([elementValidator.example], helper);
   }
 
-  parse(theValue: ValuePath, raw: unknown): string[] {
+  parse(theValue: ValuePath, raw: unknown): V[] {
     if (typeof raw != "string") {
       throw theValue.isBadAsIt("is not a string");
     }
-    return splitString(raw, this.delimiter);
+    return splitString(raw, this.delimiter).map((e, i) =>
+      this.elementValidator.parse(theValue.andThen(`${i + 1}`), e)
+    );
   }
 }
 

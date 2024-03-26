@@ -72,6 +72,8 @@ export class VDelimiterSeparated<V extends string = string> extends Validator<
 > {
   public constructor(
     readonly delimiter: string,
+    readonly minimumElements = 0,
+    readonly maximumElements = Infinity,
     readonly elementValidator: Validator<V> = new VString() as any,
     helper = elementValidator.helper
   ) {
@@ -82,7 +84,17 @@ export class VDelimiterSeparated<V extends string = string> extends Validator<
     if (typeof raw != "string") {
       throw theValue.isBadAsIt("is not a string");
     }
-    return splitString(raw, this.delimiter).map((e, i) =>
+
+    const elements = splitString(raw, this.delimiter);
+
+    if (elements.length < this.minimumElements) {
+      throw theValue.isBadAsIt("has too few items");
+    }
+    if (elements.length > this.maximumElements) {
+      throw theValue.isBadAsIt("has too many items");
+    }
+
+    return elements.map((e, i) =>
       this.elementValidator.parse(theValue.andThen(`${i + 1}`), e)
     );
   }

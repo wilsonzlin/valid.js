@@ -1,4 +1,5 @@
 import decodeBase64 from "@xtjs/lib/js/decodeBase64";
+import decodeUtf8 from "@xtjs/lib/js/decodeUtf8";
 import { Validator, ValuePath } from "./_common";
 
 export class VBytes extends Validator<Uint8Array> {
@@ -42,5 +43,19 @@ export class VBase64Encoded<V> extends Validator<V> {
       throw theValue.isBadAsIt("is not a valid Base64 string");
     }
     return this.bytesValidator.parse(theValue, decodeBase64(raw));
+  }
+}
+
+export class VUtf8Bytes<V> extends Validator<V> {
+  public constructor(readonly stringValidator: Validator<V>, helper?: string) {
+    super(stringValidator.example, helper);
+  }
+
+  public parse(theValue: ValuePath, raw: unknown): V {
+    if (!(raw instanceof Uint8Array)) {
+      throw theValue.isBadAsIt("is not a Uint8Array");
+    }
+    const decoded = decodeUtf8(raw);
+    return this.stringValidator.parseRoot(decoded);
   }
 }

@@ -12,6 +12,7 @@ export * from "./json";
 export * from "./map";
 export * from "./member";
 export * from "./number";
+export * from "./object";
 export * from "./optional";
 export * from "./string";
 export * from "./struct";
